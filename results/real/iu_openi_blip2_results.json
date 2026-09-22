@@ -1,0 +1,47 @@
+{
+  "status": "IU_OPENI_REAL_BLIP2_BASELINE_PEFT_COMPLETE",
+  "dataset": "raddar/chest-xrays-indiana-university (Open-i / Indiana University, CC BY-NC-ND 4.0)",
+  "model": "Salesforce/blip2-opt-2.7b",
+  "seed": 13,
+  "split_version": "iu-openi-v1-200",
+  "n_train": 160,
+  "n_eval": 40,
+  "lora": {
+    "r": 4,
+    "alpha": 8,
+    "dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "v_proj"
+    ]
+  },
+  "training": {
+    "epochs": 3,
+    "lr": 0.0001,
+    "max_steps": 400,
+    "steps_run": 400
+  },
+  "baseline_zero_shot": {
+    "n": 40,
+    "bleu": 0.017456787874173308,
+    "rougeL": 0.09180601942812805,
+    "bertscore_f1_mean": 0.8358978420495987,
+    "bertscore_f1_std": 0.01120118026085631,
+    "elapsed_sec": 33.011144399642944
+  },
+  "peft_fine_tuned": {
+    "n": 40,
+    "bleu": 6.031928365110587,
+    "rougeL": 0.13985627784302757,
+    "bertscore_f1_mean": 0.8463592201471328,
+    "bertscore_f1_std": 0.024183735266196903,
+    "elapsed_sec": 78.03446316719055
+  },
+  "delta_bleu": 6.014471577236414,
+  "delta_rougeL": 0.048050258414899516,
+  "delta_bertscore_f1_mean": 0.010461378097534113,
+  "no_images_saved": true,
+  "no_generated_text_saved": true,
+  "no_checkpoint_saved": true,
+  "metrics_are_non_clinical_text_comparison_only": true
+}

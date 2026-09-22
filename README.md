@@ -11,7 +11,7 @@
 
 Medical image-to-text pipelines fail quietly: a licence you didn't check, an identifier that leaked into a fixture, a contrastive model quietly relabelled as a report generator, a metric that reads like a diagnosis. **ClinVision** is the contract layer that catches all of that *before* a real dataset, model, or GPU ever enters the picture — a set of executable validators, proven against deterministic synthetic fixtures, for the rules a real chest-radiograph pipeline has to follow.
 
-There is no real clinical data, PHI, model weight, or generated report anywhere in this repository. It is not a diagnostic, triage, or patient-facing system.
+There is no real clinical data, PHI, model weight, or generated report anywhere in this repository — including the real BLIP-2 run described below, whose aggregate metrics are published but whose underlying images, text, and checkpoint never left the training run. This is not a diagnostic, triage, or patient-facing system.
 
 ---
 
@@ -65,6 +65,22 @@ One public paired image/report candidate was reviewed at the metadata level: [Pa
 
 ---
 
+## Results — real BLIP-2 on Open-i (Indiana University)
+
+The full pipeline was run for real once: BLIP-2 (`Salesforce/blip2-opt-2.7b`) zero-shot, then LoRA fine-tuned, on the [Open-i / Indiana University chest X-ray collection](https://openi.nlm.nih.gov/) (200 studies, 160 train / 40 held-out eval, patient-grouped split, seed 13, single Kaggle T4).
+
+| | BLEU | ROUGE-L | BERTScore F1 |
+|---|---:|---:|---:|
+| Zero-shot baseline | 0.017 | 0.092 | 0.836 |
+| LoRA fine-tuned (r=4, 400 steps) | 6.032 | 0.140 | 0.846 |
+| **Δ** | **+6.01** | **+0.048** | **+0.010** |
+
+A general-purpose captioning model has essentially no vocabulary overlap with radiology report language out of the box (BLEU ≈ 0); a short LoRA fine-tune on 160 examples measurably shifts it toward that vocabulary. This is a small-sample, single-seed pilot — not a claim of diagnostic quality or clinical usefulness. Full run config and numbers: [`results/real/iu_openi_blip2_results.json`](results/real/iu_openi_blip2_results.json).
+
+**What's published vs. not, and why:** the Indiana University dataset is CC BY-NC-ND (NoDerivatives), so only the training/eval code (`scripts/train_blip2_iu_openi.py`) and these aggregate metrics are published here. No image, no report text, no generated caption, and no model checkpoint from this run is included or was ever saved — reproducing it requires downloading the dataset yourself under its own licence.
+
+---
+
 ## Quick start
 
 ```bash
@@ -79,9 +95,21 @@ python -m compileall -q src tests
 No external dependencies are required — every test runs against synthetic fixtures only.
 
 <details>
-<summary>Reproducing on Kaggle (CPU, no internet)</summary>
+<summary>Reproducing the contract suite on Kaggle (CPU, no internet)</summary>
 
 `notebooks/kaggle_clinvision.ipynb` runs the same synthetic contract suite in a CPU-only, no-internet Kaggle kernel — useful as a clean-room check that the tests pass with zero external dependencies. It installs nothing, downloads nothing, and never touches a real dataset.
+
+</details>
+
+<details>
+<summary>Reproducing the real BLIP-2 results (requires the dataset + a GPU)</summary>
+
+```bash
+pip install transformers peft accelerate evaluate rouge_score bert_score sacrebleu
+python scripts/train_blip2_iu_openi.py --data-root /path/to/chest-xrays-indiana-university
+```
+
+`--data-root` must point to a local copy of `raddar/chest-xrays-indiana-university` (e.g. attached as a Kaggle notebook input, or downloaded yourself, under its CC BY-NC-ND licence — this repo does not include or redistribute it). The script re-derives the exact same 200-study, seed-13, patient-grouped split from the dataset's own CSVs and writes only the aggregate metrics shown above.
 
 </details>
 
@@ -104,9 +132,12 @@ clinvision/
 │   ├── baseline.synthetic.json
 │   └── peft.synthetic.json
 ├── notebooks/
-│   └── kaggle_clinvision.ipynb   ← CPU/no-internet reproduction
+│   └── kaggle_clinvision.ipynb   ← CPU/no-internet contract-suite reproduction
+├── scripts/
+│   └── train_blip2_iu_openi.py  ← real BLIP-2 baseline + LoRA fine-tune (needs dataset + GPU)
 ├── results/
-│   └── contract-evidence.json   ← sanitized synthetic evidence output
+│   ├── contract-evidence.json          ← sanitized synthetic evidence output
+│   └── real/iu_openi_blip2_results.json ← real aggregate metrics (no text/images/checkpoints)
 └── pyproject.toml
 ```
 
