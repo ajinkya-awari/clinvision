@@ -69,15 +69,17 @@ One public paired image/report candidate was reviewed at the metadata level: [Pa
 
 The full pipeline was run for real once: BLIP-2 (`Salesforce/blip2-opt-2.7b`) zero-shot, then LoRA fine-tuned, on the [Open-i / Indiana University chest X-ray collection](https://openi.nlm.nih.gov/) (200 studies, 160 train / 40 held-out eval, patient-grouped split, seed 13, single Kaggle T4).
 
-| | BLEU | ROUGE-L | BERTScore F1 |
+| | BLEU (sacrebleu, 0–100) | ROUGE-L (0–1) | BERTScore F1 (0–1) |
 |---|---:|---:|---:|
-| Zero-shot baseline | 0.017 | 0.092 | 0.836 |
-| LoRA fine-tuned (r=4, 400 steps) | 6.032 | 0.140 | 0.846 |
-| **Δ** | **+6.01** | **+0.048** | **+0.010** |
+| Zero-shot baseline (n=40) | 0.017 | 0.092 | 0.836 |
+| LoRA fine-tuned (r=4, 400 steps, n=40) | 6.032 | 0.140 | 0.846 |
+| **Δ (fine-tuned − baseline)** | **+6.01** | **+0.048** | **+0.010** |
 
-A general-purpose captioning model has essentially no vocabulary overlap with radiology report language out of the box (BLEU ≈ 0); a short LoRA fine-tune on 160 examples measurably shifts it toward that vocabulary. This is a small-sample, single-seed pilot — not a claim of diagnostic quality or clinical usefulness. Full run config and numbers: [`results/real/iu_openi_blip2_results.json`](results/real/iu_openi_blip2_results.json).
+These are single point values on one held-out eval set (n=40), not mean±std across multiple runs/seeds. A general-purpose captioning model has essentially no vocabulary overlap with radiology report language out of the box (BLEU ≈ 0); a short LoRA fine-tune on 160 examples measurably shifts it toward that vocabulary. This is a small-sample, single-seed pilot — not a claim of diagnostic quality or clinical usefulness. Full run config and numbers: [`results/real/iu_openi_blip2_results.json`](results/real/iu_openi_blip2_results.json).
 
-**What's published vs. not, and why:** the Indiana University dataset is CC BY-NC-ND (NoDerivatives), so only the training/eval code (`scripts/train_blip2_iu_openi.py`) and these aggregate metrics are published here. No image, no report text, no generated caption, and no model checkpoint from this run is included or was ever saved — reproducing it requires downloading the dataset yourself under its own licence.
+**Dataset attribution:** [Open-i / Indiana University Chest X-ray Collection](https://openi.nlm.nih.gov/), National Library of Medicine, accessed via the Kaggle mirror [`raddar/chest-xrays-indiana-university`](https://www.kaggle.com/datasets/raddar/chest-xrays-indiana-university), licensed [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/). No changes to the dataset itself were distributed.
+
+**What's published vs. not, and why:** the NoDerivatives term means only the training/eval code (`scripts/train_blip2_iu_openi.py`) and these aggregate metrics are published here — not the dataset itself. No image, no report text, no generated caption, and no model checkpoint from this run is included or was ever saved — reproducing it requires downloading the dataset yourself under its own licence.
 
 ---
 
@@ -110,6 +112,8 @@ python scripts/train_blip2_iu_openi.py --data-root /path/to/chest-xrays-indiana-
 ```
 
 `--data-root` must point to a local copy of `raddar/chest-xrays-indiana-university` (e.g. attached as a Kaggle notebook input, or downloaded yourself, under its CC BY-NC-ND licence — this repo does not include or redistribute it). The script re-derives the exact same 200-study, seed-13, patient-grouped split from the dataset's own CSVs and writes only the aggregate metrics shown above.
+
+The published run used `Salesforce/blip2-opt-2.7b`, unpinned latest `transformers`/`peft`/`accelerate`/`evaluate` from PyPI, and Kaggle's default Python 3.12 GPU image (single T4, CUDA) as of 2026-09-22 — exact resolved package versions were not captured in that run's log, so pin your own versions if bit-for-bit reproduction matters to you.
 
 </details>
 
