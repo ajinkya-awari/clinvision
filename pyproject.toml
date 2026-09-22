@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clinvision"
+version = "0.1.0"
+description = "Synthetic-only ClinVision contract validators."
+requires-python = ">=3.11"
+dependencies = []
+license = { text = "MIT" }
+authors = [{ name = "Ajinkya Awari" }]
+readme = "README.md"
+
+[tool.setuptools.packages.find]
+where = ["src"]

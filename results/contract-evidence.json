@@ -1,0 +1,15 @@
+{
+  "dataset_access": "none",
+  "downloads": "none",
+  "external_services": "none",
+  "gpu": "none",
+  "issues": [],
+  "models": "not_loaded",
+  "runtime": "contract-validation-only",
+  "sample_ids": [
+    "cv-synth-43f5bfb56835"
+  ],
+  "seed": 13,
+  "split_version": "synthetic-v1",
+  "status": "LOCAL-SYNTHETIC-IMPLEMENTATION-COMPLETE WITH LIMITATIONS"
+}

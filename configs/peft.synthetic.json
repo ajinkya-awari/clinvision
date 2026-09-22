@@ -1,0 +1,20 @@
+{
+  "name": "synthetic-lora-peft-contract",
+  "lane": "public-data-v1",
+  "base_model_config": "synthetic-blip2-baseline-contract",
+  "method": "lora",
+  "no_download": true,
+  "publish_adapter": false,
+  "seed": 13,
+  "split_version": "synthetic-v1",
+  "parameters": {
+    "rank": 4,
+    "alpha": 8,
+    "dropout": 0.05
+  },
+  "comparison_contract": {
+    "same_split_as_baseline": true,
+    "same_seed_as_baseline": true,
+    "local_provenance_required": true
+  }
+}

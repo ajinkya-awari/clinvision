@@ -1,0 +1,52 @@
+{
+  "licence_ledger": [
+    {
+      "sample_id": "cv-synth-ledger-001",
+      "source_dataset": "synthetic-public-fixture",
+      "source_item_id": "fixture-001",
+      "licence_name": "Synthetic Test Licence",
+      "licence_url": "https://example.invalid/licence",
+      "licence_evidence": "Synthetic fixture created for local contract tests only.",
+      "image_rights_holder": "synthetic-image-holder",
+      "text_rights_holder": "synthetic-text-holder",
+      "image_license": "Synthetic Test Licence",
+      "text_license": "Synthetic Test Licence",
+      "image_license_evidence": "Synthetic image reference has local test rights.",
+      "text_license_evidence": "Synthetic text reference has local test rights.",
+      "derivative_and_redistribution_rights": "compatible synthetic redistribution for local tests only",
+      "privacy_deidentification_evidence": "synthetic non-identifying reference only",
+      "retention_rule": "local synthetic evidence only",
+      "access_class": "public-synthetic",
+      "checksum_algorithm": "sha256",
+      "checksum_value": "not collected - no artifact access",
+      "approval_status": "approved",
+      "decision_rationale": "Synthetic fixture contains no image bytes or clinical text.",
+      "allowed_uses": ["research"],
+      "provenance_url": "https://example.invalid/provenance/fixture-001",
+      "reviewed_by": "local-synthetic-review",
+      "reviewed_at": "2026-08-27",
+      "public_data_lane": true,
+      "restricted_source": false
+    }
+  ],
+  "manifest": [
+    {
+      "stable_id": "cv-synth-3c3f4b8a1d4e",
+      "ledger_sample_id": "cv-synth-ledger-001",
+      "image_ref": "synthetic://chest-xray-placeholder-001",
+      "normalized_target": "synthetic non-clinical comparison target with no identifying content",
+      "group_id": "synthetic-group-a",
+      "metadata": {
+        "source_kind": "synthetic"
+      }
+    }
+  ],
+  "split": [
+    {
+      "stable_id": "cv-synth-3c3f4b8a1d4e",
+      "content_hash": "synthetic-hash-001",
+      "group_id": "synthetic-group-a",
+      "split": "train"
+    }
+  ]
+}

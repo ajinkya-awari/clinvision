@@ -1,0 +1,24 @@
+{
+  "name": "synthetic-blip2-baseline-contract",
+  "lane": "public-data-v1",
+  "model_family": "BLIP-2",
+  "task": "generation",
+  "no_download": true,
+  "seed": 13,
+  "split_version": "synthetic-v1",
+  "generation": {
+    "max_new_tokens": 32,
+    "num_beams": 1
+  },
+  "required_labels": [
+    "research-only",
+    "non-clinical text comparison"
+  ],
+  "blocked": [
+    "real clinical images",
+    "patient reports",
+    "model weights",
+    "external uploads",
+    "diagnostic claims"
+  ]
+}
