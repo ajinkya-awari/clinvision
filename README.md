@@ -67,15 +67,15 @@ One public paired image/report candidate was reviewed at the metadata level: [Pa
 
 ## Results — real BLIP-2 on Open-i (Indiana University)
 
-The full pipeline was run for real once: BLIP-2 (`Salesforce/blip2-opt-2.7b`) zero-shot, then LoRA fine-tuned, on the [Open-i / Indiana University chest X-ray collection](https://openi.nlm.nih.gov/) (200 studies, 160 train / 40 held-out eval, patient-grouped split, seed 13, single Kaggle T4).
+The full pipeline was run for real twice: BLIP-2 (`Salesforce/blip2-opt-2.7b`) zero-shot, then LoRA fine-tuned, on the [Open-i / Indiana University chest X-ray collection](https://openi.nlm.nih.gov/) (200 studies, 160 train / 40 held-out eval, patient-grouped split, seed 13, single Kaggle T4). The second run pins the exact model revision and every dependency version, and records full provenance — see [`EVIDENCE_LEDGER.md`](EVIDENCE_LEDGER.md) for both runs' exact config, hashes, and a short explanation of why their numbers differ slightly.
 
 | | BLEU (sacrebleu, 0–100) | ROUGE-L (0–1) | BERTScore F1 (0–1) |
 |---|---:|---:|---:|
-| Zero-shot baseline (n=40) | 0.017 | 0.092 | 0.836 |
-| LoRA fine-tuned (r=4, 400 steps, n=40) | 6.032 | 0.140 | 0.846 |
-| **Δ (fine-tuned − baseline)** | **+6.01** | **+0.048** | **+0.010** |
+| Zero-shot baseline (n=40) | 0.017 | 0.094 | 0.836 |
+| LoRA fine-tuned (r=4, 400 steps, n=40) | 5.401 | 0.162 | 0.866 |
+| **Δ (fine-tuned − baseline)** | **+5.38** | **+0.068** | **+0.030** |
 
-These are single point values on one held-out eval set (n=40), not mean±std across multiple runs/seeds. A general-purpose captioning model has essentially no vocabulary overlap with radiology report language out of the box (BLEU ≈ 0); a short LoRA fine-tune on 160 examples measurably shifts it toward that vocabulary. This is a small-sample, single-seed pilot — not a claim of diagnostic quality or clinical usefulness. Full run config and numbers: [`results/real/iu_openi_blip2_results.json`](results/real/iu_openi_blip2_results.json).
+These are single point values on one held-out eval set (n=40), not mean±std across multiple runs/seeds — figures above are from the pinned reproducibility run ([`results/real/iu_openi_blip2_results_v2_pinned.json`](results/real/iu_openi_blip2_results_v2_pinned.json); the original unpinned run's slightly different numbers are in [`results/real/iu_openi_blip2_results.json`](results/real/iu_openi_blip2_results.json)). A general-purpose captioning model has essentially no vocabulary overlap with radiology report language out of the box (BLEU ≈ 0); a short LoRA fine-tune on 160 examples measurably shifts it toward that vocabulary. This is a small-sample, single-seed pilot — not a claim of diagnostic quality or clinical usefulness.
 
 **Dataset attribution:** [Open-i / Indiana University Chest X-ray Collection](https://openi.nlm.nih.gov/), National Library of Medicine, accessed via the Kaggle mirror [`raddar/chest-xrays-indiana-university`](https://www.kaggle.com/datasets/raddar/chest-xrays-indiana-university), licensed [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/). No changes to the dataset itself were distributed.
 
@@ -107,13 +107,17 @@ No external dependencies are required — every test runs against synthetic fixt
 <summary>Reproducing the real BLIP-2 results (requires the dataset + a GPU)</summary>
 
 ```bash
-pip install transformers peft accelerate evaluate rouge_score bert_score sacrebleu
-python scripts/train_blip2_iu_openi.py --data-root /path/to/chest-xrays-indiana-university
+pip install transformers==5.17.0 peft==0.21.0 accelerate==1.15.0 \
+            rouge_score==0.1.2 bert_score==0.3.13 sacrebleu==2.4.3 \
+            sentencepiece==0.2.0 pillow==10.4.0
+python scripts/train_blip2_iu_openi.py \
+  --data-root /path/to/chest-xrays-indiana-university \
+  --model-revision 59a1ef6c1e5117b3f65523d1c6066825bcf315e3
 ```
 
-`--data-root` must point to a local copy of `raddar/chest-xrays-indiana-university` (e.g. attached as a Kaggle notebook input, or downloaded yourself, under its CC BY-NC-ND licence — this repo does not include or redistribute it). The script re-derives the exact same 200-study, seed-13, patient-grouped split from the dataset's own CSVs and writes only the aggregate metrics shown above.
+`--data-root` must point to a local copy of `raddar/chest-xrays-indiana-university` (e.g. attached as a Kaggle notebook input, or downloaded yourself, under its CC BY-NC-ND licence — this repo does not include or redistribute it). The script re-derives the exact same 200-study, seed-13, patient-grouped split from the dataset's own CSVs, pins the exact model revision, and writes only aggregate metrics plus full provenance (dependency versions, runtime, config/output hashes) — see [`EVIDENCE_LEDGER.md`](EVIDENCE_LEDGER.md) for the exact reference values to compare against.
 
-The published run used `Salesforce/blip2-opt-2.7b`, unpinned latest `transformers`/`peft`/`accelerate`/`evaluate` from PyPI, and Kaggle's default Python 3.12 GPU image (single T4, CUDA) as of 2026-09-22 — exact resolved package versions were not captured in that run's log, so pin your own versions if bit-for-bit reproduction matters to you.
+The script no longer depends on the `evaluate` wrapper package — that package calls a `huggingface_hub.HfFolder` attribute that current `huggingface_hub` releases have removed, which breaks it on a fresh install. Metrics are computed directly via `sacrebleu`, `rouge_score`, and `bert_score`.
 
 </details>
 
@@ -140,8 +144,12 @@ clinvision/
 ├── scripts/
 │   └── train_blip2_iu_openi.py  ← real BLIP-2 baseline + LoRA fine-tune (needs dataset + GPU)
 ├── results/
-│   ├── contract-evidence.json          ← sanitized synthetic evidence output
-│   └── real/iu_openi_blip2_results.json ← real aggregate metrics (no text/images/checkpoints)
+│   ├── contract-evidence.json                    ← sanitized synthetic evidence output
+│   └── real/
+│       ├── iu_openi_blip2_results.json           ← run 1 (unpinned deps)
+│       └── iu_openi_blip2_results_v2_pinned.json ← run 2 (pinned deps + model revision, canonical)
+├── EVIDENCE_LEDGER.md   ← exact config/version/hash provenance for both real runs
+├── RELEASE_GATE.md      ← what's published, what's excluded, and why
 └── pyproject.toml
 ```
 

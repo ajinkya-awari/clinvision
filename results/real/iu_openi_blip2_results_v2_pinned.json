@@ -1,0 +1,94 @@
+{
+  "status": "IU_OPENI_REAL_BLIP2_BASELINE_PEFT_COMPLETE_V2_PINNED",
+  "run_timestamp_utc": "2026-09-22T16:46:30.606918Z",
+  "protocol_config": {
+    "dataset": "raddar/chest-xrays-indiana-university",
+    "dataset_licence": "CC BY-NC-ND 4.0",
+    "model": "Salesforce/blip2-opt-2.7b",
+    "model_revision": "59a1ef6c1e5117b3f65523d1c6066825bcf315e3",
+    "seed": 13,
+    "n_total": 200,
+    "n_train": 160,
+    "n_eval": 40,
+    "lora": {
+      "r": 4,
+      "alpha": 8,
+      "dropout": 0.05,
+      "target_modules": [
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    "training": {
+      "epochs": 3,
+      "lr": 0.0001,
+      "max_steps": 400
+    }
+  },
+  "protocol_config_sha256": "79c938c96f950105569611b39f278417e6f8fa53ee7a4f89934d0962c3a84a0d",
+  "dataset": "raddar/chest-xrays-indiana-university (Open-i / Indiana University, CC BY-NC-ND 4.0)",
+  "model": "Salesforce/blip2-opt-2.7b",
+  "model_revision": "59a1ef6c1e5117b3f65523d1c6066825bcf315e3",
+  "dependency_versions": {
+    "transformers": "5.17.0",
+    "peft": "0.21.0",
+    "accelerate": "1.15.0"
+  },
+  "runtime": {
+    "python_version": "3.12.13 (main, Mar  4 2026, 09:23:07) [GCC 11.4.0]",
+    "platform": "Linux-6.12.90+-x86_64-with-glibc2.35",
+    "torch_version": "2.10.0+cu128",
+    "torch_cuda_version": "12.8",
+    "cuda_available": true,
+    "gpu_name": "Tesla T4",
+    "numpy_version": "2.0.2"
+  },
+  "seed": 13,
+  "split_version": "iu-openi-v1-200",
+  "n_train": 160,
+  "n_eval": 40,
+  "lora": {
+    "r": 4,
+    "alpha": 8,
+    "dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "v_proj"
+    ]
+  },
+  "training": {
+    "epochs": 3,
+    "lr": 0.0001,
+    "max_steps": 400,
+    "steps_run": 400
+  },
+  "metric_definitions": {
+    "bleu": "sacrebleu.corpus_bleu(preds, [refs]).score, 0-100 scale",
+    "rougeL": "rouge_score.rouge_scorer RougeScorer([rougeL], use_stemmer=True), F-measure mean, 0-1 scale",
+    "bertscore_f1": "bert_score.score(preds, refs, lang=en) F1, mean across examples, 0-1 scale"
+  },
+  "baseline_zero_shot": {
+    "n": 40,
+    "bleu": 0.017456787874173308,
+    "rougeL": 0.09442198375494955,
+    "bertscore_f1_mean": 0.8358978420495987,
+    "bertscore_f1_std": 0.01120118026085631,
+    "elapsed_sec": 28.462270498275757
+  },
+  "peft_fine_tuned": {
+    "n": 40,
+    "bleu": 5.401138944058906,
+    "rougeL": 0.16245932756475087,
+    "bertscore_f1_mean": 0.8657354682683944,
+    "bertscore_f1_std": 0.021460481805432103,
+    "elapsed_sec": 75.9543833732605
+  },
+  "delta_bleu": 5.383682156184733,
+  "delta_rougeL": 0.06803734380980132,
+  "delta_bertscore_f1_mean": 0.02983762621879571,
+  "no_images_saved": true,
+  "no_generated_text_saved": true,
+  "no_checkpoint_saved": true,
+  "no_raw_predictions_saved": true,
+  "metrics_are_non_clinical_text_comparison_only": true
+}
