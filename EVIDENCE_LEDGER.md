@@ -1,13 +1,16 @@
 # Evidence Ledger — Real BLIP-2 Run on Open-i (Indiana University)
 
-Two real runs exist for this result: an initial run with unpinned dependencies, and a
-follow-up reproducibility run with every dependency and the model revision pinned
-exactly. Both are kept — nothing is overwritten — so the lineage stays honest. Metric
-values differ slightly between the two runs because the underlying metric-library
-implementations differ (see "Why the two runs differ" below); this is expected
-implementation variance, not measurement error.
+Two real runs exist for this result. **Run 2 is the canonical reproducibility run** —
+every dependency and the model revision pinned exactly, full provenance captured,
+hash-verified. **Run 1 is a historical compatibility run**, kept only for lineage — it
+used unpinned dependencies and the now-broken `evaluate` wrapper library. Both are kept
+as-is; neither is overwritten. Their metric values differ because the underlying
+metric-library implementations differ (see "Why the two runs differ" below) — **the two
+runs must not be averaged, combined, or compared as if they came from the same
+evaluation pipeline.** All figures below are single-run aggregate results on n=40
+held-out studies, not mean±std across multiple runs or seeds.
 
-## Run 2 — pinned reproducibility run (canonical)
+## Run 2 — pinned reproducibility run (CANONICAL)
 
 | Field | Value |
 |---|---|
@@ -36,9 +39,9 @@ implementation variance, not measurement error.
 |---|---:|---:|---:|
 | Zero-shot baseline (n=40) | 0.017 | 0.094 | 0.836 |
 | LoRA fine-tuned (n=40) | 5.401 | 0.162 | 0.866 |
-| **Δ** | **+5.38** | **+0.068** | **+0.030** |
+| **Difference** | **+5.384** | **+0.068** | **+0.030** |
 
-## Run 1 — initial unpinned run (historical, first publication)
+## Run 1 — historical compatibility run (not canonical, first publication)
 
 | Field | Value |
 |---|---|
@@ -76,3 +79,7 @@ The script recomputes and prints its own `protocol_config_sha256` and `output_sh
 ## What is not published
 
 No image, report text, generated caption, raw prediction, or model checkpoint from either run is included in this repository or was ever saved to disk outside the ephemeral Kaggle session that produced it — consistent with the dataset's CC BY-NC-ND (NoDerivatives) licence term.
+
+## Status
+
+This result is **not clinically validated, not diagnostic, and not deployment-ready**. It is a research pilot on a small held-out sample (n=40), reported here as-is.

@@ -67,15 +67,21 @@ One public paired image/report candidate was reviewed at the metadata level: [Pa
 
 ## Results — real BLIP-2 on Open-i (Indiana University)
 
-The full pipeline was run for real twice: BLIP-2 (`Salesforce/blip2-opt-2.7b`) zero-shot, then LoRA fine-tuned, on the [Open-i / Indiana University chest X-ray collection](https://openi.nlm.nih.gov/) (200 studies, 160 train / 40 held-out eval, patient-grouped split, seed 13, single Kaggle T4). The second run pins the exact model revision and every dependency version, and records full provenance — see [`EVIDENCE_LEDGER.md`](EVIDENCE_LEDGER.md) for both runs' exact config, hashes, and a short explanation of why their numbers differ slightly.
+The full pipeline was run for real twice against the [Open-i / Indiana University chest X-ray collection](https://openi.nlm.nih.gov/) (200 studies, 160 train / 40 held-out eval, patient-grouped split, seed 13, single Kaggle T4): BLIP-2 (`Salesforce/blip2-opt-2.7b`) zero-shot, then LoRA fine-tuned. **The table below is the canonical reproducibility run** — exact model revision and every dependency version pinned, full provenance captured, hash-verified. An earlier **historical compatibility run** (unpinned dependencies, computed via the now-broken `evaluate` wrapper library) produced slightly different numbers and is kept only for lineage — see [`EVIDENCE_LEDGER.md`](EVIDENCE_LEDGER.md). **The two runs use different metric-library implementations and must not be averaged, combined, or compared as if from the same evaluation pipeline.**
+
+**Canonical run — single-run aggregate results, n=40 held-out studies:**
 
 | | BLEU (sacrebleu, 0–100) | ROUGE-L (0–1) | BERTScore F1 (0–1) |
 |---|---:|---:|---:|
-| Zero-shot baseline (n=40) | 0.017 | 0.094 | 0.836 |
-| LoRA fine-tuned (r=4, 400 steps, n=40) | 5.401 | 0.162 | 0.866 |
-| **Δ (fine-tuned − baseline)** | **+5.38** | **+0.068** | **+0.030** |
+| Zero-shot baseline | 0.017 | 0.094 | 0.836 |
+| LoRA fine-tuned (r=4, 400 steps) | 5.401 | 0.162 | 0.866 |
+| **Difference** | **+5.384** | **+0.068** | **+0.030** |
 
-These are single point values on one held-out eval set (n=40), not mean±std across multiple runs/seeds — figures above are from the pinned reproducibility run ([`results/real/iu_openi_blip2_results_v2_pinned.json`](results/real/iu_openi_blip2_results_v2_pinned.json); the original unpinned run's slightly different numbers are in [`results/real/iu_openi_blip2_results.json`](results/real/iu_openi_blip2_results.json)). A general-purpose captioning model has essentially no vocabulary overlap with radiology report language out of the box (BLEU ≈ 0); a short LoRA fine-tune on 160 examples measurably shifts it toward that vocabulary. This is a small-sample, single-seed pilot — not a claim of diagnostic quality or clinical usefulness.
+These are single point values on one held-out eval set (n=40), not mean±std across multiple runs/seeds. Full config, hashes, and reproduction steps: [`results/real/iu_openi_blip2_results_v2_pinned.json`](results/real/iu_openi_blip2_results_v2_pinned.json) and [`EVIDENCE_LEDGER.md`](EVIDENCE_LEDGER.md). The historical compatibility run's numbers are in [`results/real/iu_openi_blip2_results.json`](results/real/iu_openi_blip2_results.json), unchanged, for lineage only.
+
+A general-purpose captioning model has essentially no vocabulary overlap with radiology report language out of the box (BLEU ≈ 0); a short LoRA fine-tune on 160 examples measurably shifts it toward that vocabulary.
+
+**This result is not clinically validated, not diagnostic, and not deployment-ready.** No image, report, generated caption, checkpoint, or patient-level output from either run is published anywhere in this repository.
 
 **Dataset attribution:** [Open-i / Indiana University Chest X-ray Collection](https://openi.nlm.nih.gov/), National Library of Medicine, accessed via the Kaggle mirror [`raddar/chest-xrays-indiana-university`](https://www.kaggle.com/datasets/raddar/chest-xrays-indiana-university), licensed [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/). No changes to the dataset itself were distributed.
 

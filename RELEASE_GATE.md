@@ -1,10 +1,19 @@
 # Release Gate — ClinVision Public Repository
 
-## Status: RELEASED, COMPLETE WITH LIMITATIONS
+## Final status
+
+```
+PUBLIC RELEASE COMPLETE
+REAL GPU RUN VERIFIED
+REPRODUCIBILITY EVIDENCE VERIFIED
+COMPLETE WITH LIMITATIONS
+NOT CLINICALLY VALIDATED
+```
 
 This repository is public and its contents are approved for release under the terms
-below. It is not a diagnostic, triage, or patient-facing system, and no such claim is
-made anywhere in it.
+below. It is release-ready as a documented research artifact — not as clinical
+validation or a deployment-ready system. It is not diagnostic, not triage, not
+patient-facing, and no such claim is made anywhere in it.
 
 ## What was explicitly approved for publication
 
