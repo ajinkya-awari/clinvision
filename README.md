@@ -3,13 +3,23 @@
 <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=ClinVision&fontSize=52&fontColor=fff&animation=twinkling&fontAlignY=38&desc=A%20contract%20layer%20for%20safe%20medical%20image-to-text%20pipelines&descAlignY=58&descAlign=50&descSize=16"/>
 
 [![Tests](https://img.shields.io/badge/tests-25%20passing-brightgreen)](tests/)
+[![Real GPU Run](https://img.shields.io/badge/real%20GPU%20run-verified-blue)](EVIDENCE_LEDGER.md)
+[![BLEU](https://img.shields.io/badge/BLEU-%2B5.384-success)](EVIDENCE_LEDGER.md)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![GitHub](https://img.shields.io/badge/GitHub-ajinkya--awari%2Fclinvision-181717?logo=github)](https://github.com/ajinkya-awari/clinvision)
 
 </div>
 
-Medical image-to-text pipelines fail quietly: a licence you didn't check, an identifier that leaked into a fixture, a contrastive model quietly relabelled as a report generator, a metric that reads like a diagnosis. **ClinVision** is the contract layer that catches all of that *before* a real dataset, model, or GPU ever enters the picture — a set of executable validators, proven against deterministic synthetic fixtures, for the rules a real chest-radiograph pipeline has to follow.
+Medical image-to-text pipelines fail quietly: a licence you didn't check, an identifier that leaked into a fixture, a contrastive model quietly relabelled as a report generator, a metric that reads like a diagnosis. **ClinVision** is the contract layer that catches all of that *before* a real dataset, model, or GPU ever enters the picture — a set of executable validators, proven against deterministic synthetic fixtures, for the rules a real chest-radiograph pipeline has to follow. It was then proven end-to-end on a real GPU run against real chest X-ray data.
+
+<div align="center">
+
+| Safety layer | Real-data proof | Reproducibility |
+|:---:|:---:|:---:|
+| **25/25** contract tests, accept+reject path for every rule | **BLIP-2 + LoRA**, real GPU run, hash-verified, exact model revision pinned | Every dependency version, seed, split, and config hash published in [`EVIDENCE_LEDGER.md`](EVIDENCE_LEDGER.md) |
+
+</div>
 
 There is no real clinical data, PHI, model weight, or generated report anywhere in this repository — including the real BLIP-2 run described below, whose aggregate metrics are published but whose underlying images, text, and checkpoint never left the training run. This is not a diagnostic, triage, or patient-facing system.
 
